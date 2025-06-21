@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/ui/header";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,10 +15,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body>
+    <ClerkProvider>
+      <body className={inter.className}>
         {/* header */}
-        {children}
+        <Header />
+        <main className="min-h-screen">{children}</main>
         {/* footer */}
         <footer className="bg-blue-100 py-12">
           <div className="container mx-auto text-center text-gray-650">
@@ -27,6 +30,6 @@ export default function RootLayout({ children }) {
           </div>
         </footer>
       </body>
-    </html>
+    </ClerkProvider>
   );
 }
