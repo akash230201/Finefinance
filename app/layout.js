@@ -16,20 +16,23 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <body className={inter.className}>
-        {/* header */}
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        {/* footer */}
-        <footer className="bg-blue-100 py-12">
-          <div className="container mx-auto text-center text-gray-650">
-            <p>
-              *Made for personal use and demonstration perpose only by MD Akash
-              Mondal*
-            </p>
-          </div>
-        </footer>
-      </body>
+      <html lang="en">
+        <head />
+        <body className={`${inter.className}`}>
+          {/* header */}
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          {/* footer */}
+          <footer className="bg-blue-100 py-12">
+            <div className="container mx-auto text-center text-gray-650">
+              <p>
+                *Made for personal use and demonstration perpose only by MD Akash
+                Mondal*
+              </p>
+            </div>
+          </footer>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
