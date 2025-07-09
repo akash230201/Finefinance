@@ -26,8 +26,8 @@ export default function RootLayout({ children }) {
           <footer className="bg-blue-100 py-12">
             <div className="container mx-auto text-center text-gray-650">
               <p>
-                *Made for personal use and demonstration perpose only by MD Akash
-                Mondal*
+                *Made for personal use and demonstration perpose only by MD
+                Akash Mondal*
               </p>
             </div>
           </footer>
