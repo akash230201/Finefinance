@@ -1,33 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# FineFinance
+
+A modern financial dashboard application built with Next.js and shadcn/ui.
+
+## Features
+
+- Modern UI with shadcn/ui components
+- Responsive design
+- Dark mode support
+- Financial tracking and visualization
+- Next.js App Router
+
+## Tech Stack
+
+- Next.js
+- React
+- Tailwind CSS
+- shadcn/ui components
+- next-themes for dark mode
+- Geist font by Vercel
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/app` - Next.js application routes
+- `/components` - React components, including shadcn/ui components
+- `/lib` - Utility functions and helpers
+- `/public` - Static assets
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+This project is built with Next.js. To learn more about Next.js:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [shadcn/ui Documentation](https://ui.shadcn.com/docs)
 
 ## Deploy on Vercel
 
