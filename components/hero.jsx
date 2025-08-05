@@ -2,37 +2,42 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 const HeroSection = () => {
   return (
     <div className="pb-20 px-4">
-      <div
-        className="relative h-screen bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-        }}
-      >
+      <div className="container mx-auto text-center">
+        <h1 className="text-5xl md:text-8xl lg:text-[100px] pb-6 gradient-title">
+          Manage Your Personal Finances <br /> With Ease
+        </h1>
+        <p className="text=xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          FineFinance is a modern financial dashboard application that helps you
+          manage your finances effortlessly.
+        </p>
+        <div className="flex justify-center space-x-4">
+          <Link href="/dashboard">
+            <Button size="lg" className="px-8">
+              Get Started
+            </Button>
+          </Link>
+          <Link href="https://www.youtube.com">
+            <Button size="lg" variant="outline" className="px-8">
+              Watch Video
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div>
         <div>
-          <h1>
-            Manage Your Personal Finances <br /> With Ease
-          </h1>
-          <p>
-            FineFinance is a modern financial dashboard application that helps
-            you manage your finances effortlessly.
-          </p>
-          <div>
-            <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="px-8">
-                Get Started
-              </Button>
-            </Link>
-            <Link href="https://www.youtube.com">
-              <Button size="lg" variant="outline" className="px-8">
-                Watch Video
-              </Button>
-            </Link>
-          </div>
+          <Image
+            src="/banner.png"
+            alt="Hero Image"
+            width={1280}
+            height={720}
+            className="rounded-lg shadow-2xl boder mx-auto"
+            priority
+          />
         </div>
       </div>
     </div>
