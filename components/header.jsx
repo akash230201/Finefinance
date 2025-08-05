@@ -9,11 +9,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, PenBox } from "lucide-react";
 
 const Header = () => {
   return (
-    <div className="fixed top-0 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-50 border-b dark:border-slate-800">
+    <div className="fixed top-0 w-full backdrop-blur-md z-50  ">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/">
           <Image
@@ -27,10 +27,17 @@ const Header = () => {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <SignedIn>
-            <Link href={"/dashboard"}>
+            <Link href={"/dashboard"} className="flex items-center">
               <Button variant="outline">
                 <LayoutDashboard size={18} />
                 <span className="hidden md:inline">Dashboard</span>
+              </Button>
+            </Link>
+
+            <Link href={"/transactions/create"} className="flex items-center">
+              <Button variant="outline">
+                <PenBox size={18} />
+                <span className="hidden md:inline">Add Transaction</span>
               </Button>
             </Link>
           </SignedIn>
@@ -40,7 +47,15 @@ const Header = () => {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "h-10 w-10",
+                  userButtonAvatarImage: "rounded-full",
+                  userButtonProfile: "hidden",
+                },
+              }}
+            />
           </SignedIn>
         </div>
       </nav>
