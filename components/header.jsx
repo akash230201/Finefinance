@@ -33,14 +33,18 @@ const Header = async () => {
             <SignedIn>
               <div className="hidden md:flex items-center gap-2">
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="rounded-md h-9">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-md h-9"
+                  >
                     <LayoutDashboard size={16} className="mr-2" />
                     <span>Dashboard</span>
                   </Button>
                 </Link>
 
                 <Link href="/transactions/create">
-                  <Button variant="ghost" size="sm" className="rounded-md h-9">
+                  <Button size="sm" className="rounded-md h-9">
                     <PenBox size={16} className="mr-2" />
                     <span>New Transaction</span>
                   </Button>
@@ -51,7 +55,11 @@ const Header = async () => {
             <SignedOut>
               <div className="hidden md:flex items-center gap-3">
                 <SignInButton forceRedirectUrl="/dashboard">
-                  <Button variant="ghost" size="sm" className="rounded-md h-9">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-md h-9"
+                  >
                     Sign In
                   </Button>
                 </SignInButton>
