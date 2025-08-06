@@ -113,11 +113,11 @@ export default function Home() {
             {testimonialsData.map((testimonial, index) => (
               <Card
                 key={index}
-                className="testimonial-card border-border/40 hover:shadow-lg transition-all"
+                className="testimonial-card border-border/40 hover:shadow-lg transition-all hover:border-primary/20 dark:hover:border-secondary/30"
               >
                 <CardContent className="pt-6 pb-6">
                   <svg
-                    className="text-primary h-6 w-6 mb-4"
+                    className="text-primary dark:text-secondary h-6 w-6 mb-4"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
