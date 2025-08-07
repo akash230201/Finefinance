@@ -16,12 +16,12 @@ const serializeTransaction = (obj) => {
 
 export async function createAccount(data) {
   try {
-    const { userID } = await auth();
-    if (!userID) {
+    const { userId } = await auth();
+    if (!userId) {
       throw new Error("User not authenticated");
     }
     const user = await db.user.findUnique({
-      where: { clerkUserId: userID },
+      where: { clerkUserId: userId },
     });
 
     if (!user) {
