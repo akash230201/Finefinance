@@ -73,7 +73,7 @@ export default function RootLayout({ children }) {
                         </svg>
                       </Link>
                       <Link
-                        href="https://linkedin.com/in/akash230201"
+                        href="https://www.linkedin.com/in/akashmondal739"
                         className="text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <svg
@@ -92,7 +92,7 @@ export default function RootLayout({ children }) {
                         </svg>
                       </Link>
                       <Link
-                        href="https://twitter.com/akash230201"
+                        href="https://x.com/Techno_Define"
                         className="text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <svg
@@ -109,7 +109,7 @@ export default function RootLayout({ children }) {
                         </svg>
                       </Link>
                       <Link
-                        href="mailto:akash230201@gmail.com"
+                        href="mailto:akashmondal739@gmail.com"
                         className="text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <svg
