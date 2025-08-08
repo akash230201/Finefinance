@@ -46,3 +46,7 @@ next-env.d.ts
 /lib/generated/prisma
 
 /.vscode/
+
+/actions/seed.js
+
+/api/seed/route.js
