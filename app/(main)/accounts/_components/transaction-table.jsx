@@ -36,6 +36,7 @@ import {
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { set } from "zod";
+import { se } from "date-fns/locale";
 
 const RECIRRING_INTERVALS = {
   DAILY: "Daily",
@@ -53,6 +54,8 @@ const TransactionTable = ({ transactions }) => {
     direction: "desc",
   });
 
+  console.log(selectedIds);
+
   const filteredAndSortedTransactions = transactions; // Placeholder for actual filtering and sorting logic
 
   const handleSort = (field) => {
@@ -61,6 +64,22 @@ const TransactionTable = ({ transactions }) => {
       direction:
         current.field === field && current.direction === "asc" ? "desc" : "asc",
     }));
+  };
+
+  const handleSelect = (id) => {
+    setSelectedIds((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredAndSortedTransactions.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredAndSortedTransactions.map((item) => item.id));
+    }
   };
 
   return (
@@ -72,7 +91,15 @@ const TransactionTable = ({ transactions }) => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px] ">
-                <Checkbox className="border shadow-sm" />
+                <Checkbox
+                  className="border shadow-sm"
+                  onCheckedChange={handleSelectAll}
+                  checked={
+                    selectedIds.length ===
+                      filteredAndSortedTransactions.length &&
+                    filteredAndSortedTransactions.length > 0
+                  }
+                />
               </TableHead>
               <TableHead
                 className="cursor-pointer"
@@ -135,7 +162,13 @@ const TransactionTable = ({ transactions }) => {
               filteredAndSortedTransactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
-                    <Checkbox variant="outline" className="border shadow-sm" />
+                    <Checkbox
+                      className="border shadow-sm"
+                      onCheckedChange={(checked) =>
+                        handleSelect(transaction.id)
+                      }
+                      checked={selectedIds.includes(transaction.id)}
+                    />
                   </TableCell>
                   <TableCell>
                     {format(new Date(transaction.date), "PP")}
