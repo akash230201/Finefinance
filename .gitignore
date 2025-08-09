@@ -49,4 +49,4 @@ next-env.d.ts
 
 /actions/seed.js
 
-/api/seed/route.js
+/app/api/seed/route.js
