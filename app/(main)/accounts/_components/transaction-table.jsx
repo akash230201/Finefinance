@@ -105,17 +105,12 @@ const TransactionTable = ({ transactions }) => {
         case "amount":
           comparison = a.amount - b.amount;
           break;
-        case "recurring":
-          comparison =
-            a.isRecurring === b.isRecurring ? 0 : a.isRecurring ? -1 : 1;
-          break;
         default:
           comparison = 0;
           break;
       }
 
       return sortConfig.direction === "asc" ? comparison : -comparison;
-      return result;
     });
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
 
@@ -275,20 +270,7 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort("recurring")}
-              >
-                <div className="flex items-center justify-end">
-                  Recurring
-                  {sortConfig.field === "recurring" &&
-                    (sortConfig.direction === "asc" ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronUp className="ml-1 h-4 w-4 rotate-180" />
-                    ))}
-                </div>
-              </TableHead>
+              <TableHead>Recurring</TableHead>
               <TableHead className="[50px]" />
             </TableRow>
           </TableHeader>
