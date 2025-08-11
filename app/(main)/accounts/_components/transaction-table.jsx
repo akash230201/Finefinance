@@ -30,12 +30,21 @@ import {
   ChevronUp,
   Clock,
   MoreHorizontal,
-  RefreshCcw,
   RefreshCw,
+  Search,
+  Trash,
+  X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { set } from "zod";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { se } from "date-fns/locale";
 
 const RECIRRING_INTERVALS = {
@@ -48,15 +57,67 @@ const RECIRRING_INTERVALS = {
 const TransactionTable = ({ transactions }) => {
   const router = useRouter();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [recurringFilter, setRecurringFilter] = useState("");
+
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     field: "date",
     direction: "desc",
   });
 
-  console.log(selectedIds);
+  const filteredAndSortedTransactions = useMemo(() => {
+    let result = [...transactions];
 
-  const filteredAndSortedTransactions = transactions; // Placeholder for actual filtering and sorting logic
+    //search filter
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
+      result = result.filter((transaction) =>
+        transaction.description?.toLowerCase().includes(searchTermLower)
+      );
+    }
+
+    // type filter
+    if (typeFilter) {
+      result = result.filter((transaction) => transaction.type === typeFilter);
+    }
+
+    // recurring filter
+    if (recurringFilter) {
+      result = result.filter((transaction) => {
+        if (recurringFilter === "recurring") return transaction.isRecurring;
+        return !transaction.isRecurring;
+      });
+    }
+
+    // sorting
+    return result.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortConfig.field) {
+        case "date":
+          comparison = new Date(a.date) - new Date(b.date);
+          break;
+        case "category":
+          comparison = a.category.localeCompare(b.category);
+          break;
+        case "amount":
+          comparison = a.amount - b.amount;
+          break;
+        case "recurring":
+          comparison =
+            a.isRecurring === b.isRecurring ? 0 : a.isRecurring ? -1 : 1;
+          break;
+        default:
+          comparison = 0;
+          break;
+      }
+
+      return sortConfig.direction === "asc" ? comparison : -comparison;
+      return result;
+    });
+  }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
 
   const handleSort = (field) => {
     setSortConfig((current) => ({
@@ -82,9 +143,79 @@ const TransactionTable = ({ transactions }) => {
     }
   };
 
+  const handleBulkDelete = () => {};
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setTypeFilter("");
+    setRecurringFilter("");
+    setSelectedIds([]);
+  };
+
   return (
     <div className="space-y-4">
       {/* filters */}
+      <div className="flex flex-col sm:flex-row gap-4 ">
+        <div className="relative flex-1 border rounded-md">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            className="pl-10"
+            placeholder="Search transactions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="INCOME">Income</SelectItem>
+              <SelectItem value="EXPENSE">Expense</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={recurringFilter}
+            onValueChange={(value) => setRecurringFilter(value)}
+          >
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="All Transaction Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recurring">Recurring Only</SelectItem>
+              <SelectItem value="non-recurring">Non-Recurring Only</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {selectedIds.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Trash className="h-4 w-4 mr-2" />
+                Delete Selected ({selectedIds.length})
+              </Button>
+            </div>
+          )}
+
+          {(searchTerm || typeFilter || recurringFilter) && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleClearFilters}
+              title="Clear all filters"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+
       {/* Transaction Table */}
       <div className="rounded-md border">
         <Table>
@@ -144,7 +275,20 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead>Recurring</TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("recurring")}
+              >
+                <div className="flex items-center justify-end">
+                  Recurring
+                  {sortConfig.field === "recurring" &&
+                    (sortConfig.direction === "asc" ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronUp className="ml-1 h-4 w-4 rotate-180" />
+                    ))}
+                </div>
+              </TableHead>
               <TableHead className="[50px]" />
             </TableRow>
           </TableHeader>
