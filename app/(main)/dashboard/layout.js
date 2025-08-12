@@ -13,7 +13,7 @@ const DashboardLayout = () => {
           <span className="absolute bottom-2 left-0 w-full h-3 bg-gradient-to-r from-primary/30 to-secondary/30 -z-0 transform -rotate-1"></span>
         </span>
       </h1>
-      <Suspense fallback={<BarLoader />}>
+      <Suspense fallback={<BarLoader width={"100%"} />}>
         <DashboardPage />
       </Suspense>
     </div>

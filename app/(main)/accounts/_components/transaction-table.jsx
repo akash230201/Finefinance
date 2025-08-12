@@ -35,7 +35,7 @@ import {
   Trash,
   X,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import {
@@ -46,6 +46,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { se } from "date-fns/locale";
+import useFetch from "@/hooks/use-fetch";
+import { bulkDeleteTransactions } from "@/actions/accounts";
+import { toast } from "sonner";
+import { BarLoader } from "react-spinners";
 
 const RECIRRING_INTERVALS = {
   DAILY: "Daily",
@@ -66,6 +70,12 @@ const TransactionTable = ({ transactions }) => {
     field: "date",
     direction: "desc",
   });
+
+  const {
+    loading: deleteLoading,
+    fn: deletefn,
+    data: deleteData,
+  } = useFetch(bulkDeleteTransactions);
 
   const filteredAndSortedTransactions = useMemo(() => {
     let result = [...transactions];
@@ -138,7 +148,23 @@ const TransactionTable = ({ transactions }) => {
     }
   };
 
-  const handleBulkDelete = () => {};
+  const handleBulkDelete = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${selectedIds.length} transactions? This action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    deletefn(selectedIds);
+  };
+
+  useEffect(() => {
+    if (deleteData && !deleteLoading) {
+      toast.error("transactions deleted successfully.");
+    }
+  }, [deleteData, deleteLoading]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -149,6 +175,8 @@ const TransactionTable = ({ transactions }) => {
 
   return (
     <div className="space-y-4">
+      {deleteLoading && <BarLoader width={"100%"} />}
+
       {/* filters */}
       <div className="flex flex-col sm:flex-row gap-4 ">
         <div className="relative flex-1 border rounded-md">
@@ -370,7 +398,7 @@ const TransactionTable = ({ transactions }) => {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive"
-                          // onClick={() =>deletefn([transaction.id])}
+                          onClick={() => deletefn([transaction.id])}
                         >
                           Delete
                         </DropdownMenuItem>
