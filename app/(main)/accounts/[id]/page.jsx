@@ -37,7 +37,7 @@ const AccountPage = async ({ params }) => {
       </div>
       {/* chart section can be added here */}
       {/* transactions section can be added here */}
-      <Suspense fallback={<BarLoader />}>
+      <Suspense fallback={<BarLoader width={"100%"} />}>
         <TransactionTable transactions={account.transactions} />
       </Suspense>
     </div>

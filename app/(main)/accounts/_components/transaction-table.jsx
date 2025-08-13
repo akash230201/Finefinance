@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -45,11 +44,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { se } from "date-fns/locale";
 import useFetch from "@/hooks/use-fetch";
 import { bulkDeleteTransactions } from "@/actions/accounts";
 import { toast } from "sonner";
 import { BarLoader } from "react-spinners";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const RECIRRING_INTERVALS = {
   DAILY: "Daily",
@@ -58,12 +65,15 @@ const RECIRRING_INTERVALS = {
   YEARLY: "Yearly",
 };
 
+const ITEMS_PER_PAGE = 30;
+
 const TransactionTable = ({ transactions }) => {
   const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({
@@ -77,7 +87,7 @@ const TransactionTable = ({ transactions }) => {
     data: deleteData,
   } = useFetch(bulkDeleteTransactions);
 
-  const filteredAndSortedTransactions = useMemo(() => {
+  const filteredTransactions = useMemo(() => {
     let result = [...transactions];
 
     //search filter
@@ -124,6 +134,20 @@ const TransactionTable = ({ transactions }) => {
     });
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
 
+  // Calculate pagination info
+  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
+
+  // Get current page items
+  const currentItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredTransactions, currentPage]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, typeFilter, recurringFilter, sortConfig]);
+
   const handleSort = (field) => {
     setSortConfig((current) => ({
       field,
@@ -141,10 +165,10 @@ const TransactionTable = ({ transactions }) => {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === filteredAndSortedTransactions.length) {
+    if (selectedIds.length === currentItems.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredAndSortedTransactions.map((item) => item.id));
+      setSelectedIds(currentItems.map((item) => item.id));
     }
   };
 
@@ -162,9 +186,13 @@ const TransactionTable = ({ transactions }) => {
 
   useEffect(() => {
     if (deleteData && !deleteLoading) {
-      toast.error("transactions deleted successfully.");
+      toast.success("Transactions deleted successfully.");
+      // Reset page to 1 if needed after deletion
+      if (currentItems.length === 0 && currentPage > 1) {
+        setCurrentPage((prev) => Math.max(1, prev - 1));
+      }
     }
-  }, [deleteData, deleteLoading]);
+  }, [deleteData, deleteLoading, currentItems.length, currentPage]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -249,9 +277,8 @@ const TransactionTable = ({ transactions }) => {
                   className="border shadow-sm"
                   onCheckedChange={handleSelectAll}
                   checked={
-                    selectedIds.length ===
-                      filteredAndSortedTransactions.length &&
-                    filteredAndSortedTransactions.length > 0
+                    selectedIds.length === currentItems.length &&
+                    currentItems.length > 0
                   }
                 />
               </TableHead>
@@ -303,7 +330,7 @@ const TransactionTable = ({ transactions }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAndSortedTransactions.length === 0 ? (
+            {currentItems.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
@@ -313,7 +340,7 @@ const TransactionTable = ({ transactions }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredAndSortedTransactions.map((transaction) => (
+              currentItems.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
                     <Checkbox
@@ -411,6 +438,111 @@ const TransactionTable = ({ transactions }) => {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination UI */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+            {Math.min(
+              currentPage * ITEMS_PER_PAGE,
+              filteredTransactions.length
+            )}{" "}
+            of {filteredTransactions.length} transactions
+          </div>
+          <div className="flex items-center space-x-2">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    className={
+                      currentPage === 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+
+                {/* First page */}
+                {currentPage > 2 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(1)}
+                      isActive={currentPage === 1}
+                    >
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                {/* Ellipsis if needed */}
+                {currentPage > 3 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {/* Previous page if not first */}
+                {currentPage > 1 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                    >
+                      {currentPage - 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                {/* Current page */}
+                <PaginationItem>
+                  <PaginationLink isActive>{currentPage}</PaginationLink>
+                </PaginationItem>
+
+                {/* Next page if not last */}
+                {currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                    >
+                      {currentPage + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                {/* Ellipsis if needed */}
+                {currentPage < totalPages - 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                {/* Last page if not near current */}
+                {currentPage < totalPages - 1 && (
+                  <PaginationItem>
+                    <PaginationLink onClick={() => setCurrentPage(totalPages)}>
+                      {totalPages}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
+                    }
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
